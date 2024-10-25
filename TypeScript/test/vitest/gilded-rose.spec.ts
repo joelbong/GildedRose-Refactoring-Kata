@@ -1,9 +1,7 @@
-import { Item, GildedRose } from '@/gilded-rose';
+import { Item, GildedRose, QualityNegativeError } from '@/gilded-rose';
 
 describe('Gilded Rose', () => {
-  it('should foo', () => {
-    const gildedRose = new GildedRose([new Item('foo', 0, 0)]);
-    const items = gildedRose.updateQuality();
-    expect(items[0].name).toBe('fixme');
+  it('New item quality cannot be zero', () => {
+    expect(() => new GildedRose([new Item('foo', 0, -1)])).toThrow(QualityNegativeError)
   });
 });
