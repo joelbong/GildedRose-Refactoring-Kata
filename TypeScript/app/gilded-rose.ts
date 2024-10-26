@@ -92,6 +92,9 @@ class ItemUpdater {
     if (name === ItemExceptions.BACKSTAGE_PASSES) {
       return this.updateQualityValueBackstagePasses(sellIn, quality);
     }
+    if (name === ItemExceptions.CONJURED) {
+      return this.updateQualityValueConjured(sellIn, quality);
+    }
     if (sellIn < 0) {
       return Math.max(Math.floor(quality / 2), 0);
     } else {
@@ -122,6 +125,14 @@ class ItemUpdater {
       return Math.min(quality * 2, 50);
     }
     return Math.min(quality + 1, 50);
+  }
+
+  private updateQualityValueConjured(sellIn: number, quality: number): number {
+    if (sellIn < 0) {
+      return Math.max(Math.floor(quality / 4), 0);
+    } else {
+      return Math.max(quality / 2, 0);
+    }
   }
 }
 

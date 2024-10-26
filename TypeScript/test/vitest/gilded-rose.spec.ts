@@ -52,7 +52,7 @@ describe("Gilded Rose - Update quality", () => {
     [5, 4],
     [0, 0],
   ])(
-    "Quality where sell date HAS NOT passed must update from %d to %d",
+    "Quality where sell date HAS NOT passed must update from %i to %i",
     (quality, expectedQuality) => {
       const gildedRose = new GildedRose([new Item("foo", 5, quality)]);
       const updatedQuality = gildedRose.updateQuality()[0].quality;
@@ -76,7 +76,7 @@ describe("Gilded Rose - Update quality", () => {
 
 describe("Gilded Rose - Update quality exceptions", () => {
   test.concurrent.each([[5], [-5]])(
-    ItemExceptions.AGED_BRIE + " increases in quality for sellIn $i",
+    ItemExceptions.AGED_BRIE + " increases in quality for sellIn %i",
     (sellIn) => {
       const gildedRose = new GildedRose([
         new Item(ItemExceptions.AGED_BRIE, sellIn, 20),
@@ -154,6 +154,21 @@ describe("Gilded Rose - Update quality exceptions", () => {
       ]);
       const updatedQuality = gildedRose.updateQuality()[0].quality;
       expect(updatedQuality).toBe(50);
+    }
+  );
+  test.concurrent.each([
+    [20, 12, 6],
+    [-1, 12, 3],
+    [-5, 0, 0],
+  ])(
+    ItemExceptions.CONJURED +
+      " decreases in quality twice as fast as normal items where sellIn is %i and quality is %i ",
+    (sellIn, quality, expectedQuality) => {
+      const gildedRose = new GildedRose([
+        new Item(ItemExceptions.CONJURED, sellIn, quality),
+      ]);
+      const updatedQuality = gildedRose.updateQuality()[0].quality;
+      expect(updatedQuality).toBe(expectedQuality);
     }
   );
 });
