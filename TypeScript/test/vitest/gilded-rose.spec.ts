@@ -32,7 +32,7 @@ describe("Gilded Rose - New item quality exceptions", () => {
 });
 
 describe("Gilded Rose - Update quality", () => {
-  test.each([
+  test.concurrent.each([
     [5, 4],
     [0, -1],
     [-1, -2],
@@ -42,7 +42,7 @@ describe("Gilded Rose - Update quality", () => {
     console.log("Sellin decrease", sellIn, expectedSellIn, updatedSellin);
     expect(updatedSellin).toBe(expectedSellIn);
   });
-  test.each([
+  test.concurrent.each([
     [5, 4],
     [0, 0],
   ])(
@@ -53,7 +53,7 @@ describe("Gilded Rose - Update quality", () => {
       expect(updatedQuality).toBe(expectedQuality);
     }
   );
-  test.each([
+  test.concurrent.each([
     [20, 10],
     [5, 2],
     [1, 0],
