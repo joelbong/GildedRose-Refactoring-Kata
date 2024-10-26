@@ -31,10 +31,17 @@ export class Item {
 export class ItemUpdater {
   validateQualityValue(item: Item) {
     if (item.quality < 0) {
-      throw new QualityNegativeError(item);
+      throw new QualitySubceeded(item, 0);
     }
-    if (item.name !== "Sulfuras, Hand of Ragnaros" || item.quality > 50) {
+    if (item.name !== "Sulfuras, Hand of Ragnaros" && item.quality > 50) {
       throw new QualityValueExceeded(item, 50);
+    }
+    if (item.name === "Sulfuras, Hand of Ragnaros") {
+      if (item.quality < 80) {
+        throw new QualitySubceeded(item, 80);
+      } else if (item.quality > 80) {
+        throw new QualityValueExceeded(item, 80);
+      }
     }
     return item;
   }
@@ -49,9 +56,9 @@ class QualityValidationError extends Error {
   }
 }
 
-export class QualityNegativeError extends QualityValidationError {
-  constructor(item: Item) {
-    super(item, "Quality cannot be less than 0");
+export class QualitySubceeded extends QualityValidationError {
+  constructor(item: Item, expectedValue: number) {
+    super(item, `Quality cannot be less than ${expectedValue}`);
     this.name = "QualityNegativeError";
   }
 }
