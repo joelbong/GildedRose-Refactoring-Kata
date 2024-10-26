@@ -1,16 +1,19 @@
 export class GildedRose {
   items: Array<Item>;
+  private itemQualityValidator = new ItemQualityValidator();
   private itemUpdater: ItemUpdater = new ItemUpdater();
 
   constructor(items = [] as Array<Item>) {
     this.items = items.map((item) =>
-      this.itemUpdater.validateQualityValue(item)
+      this.itemQualityValidator.validateQuality(item)
     );
   }
 
   updateQuality() {
     this.items = this.items.map((item) => {
-      return this.itemUpdater.updateQuality(item);
+      return this.itemQualityValidator.validateQuality(
+        this.itemUpdater.updateQuality(item)
+      );
     });
     return this.items;
   }
@@ -28,8 +31,8 @@ export class Item {
   }
 }
 
-export class ItemUpdater {
-  validateQualityValue(item: Item) {
+class ItemQualityValidator {
+  validateQuality(item: Item) {
     if (item.quality < 0) {
       throw new QualitySubceeded(item, 0);
     }
@@ -43,14 +46,28 @@ export class ItemUpdater {
         throw new QualityValueExceeded(item, 80);
       }
     }
-    return item;
+    return new Item(item.name, item.sellIn, item.quality);
   }
-  updateQuality(item: Item) {
-    item.sellIn -= 1;
-    if (item.quality > 0) {
-      item.quality -= 1;
+}
+
+class ItemUpdater {
+  updateQuality(item: Item): Item {
+    const newSellIn = this.updateSellin(item.sellIn);
+    const newQuality = this.updateQualityValue(item.quality, item.sellIn);
+    return new Item(item.name, newSellIn, newQuality);
+  }
+
+  private updateSellin(sellIn: number): number {
+    sellIn = sellIn -= 1;
+    return sellIn;
+  }
+
+  private updateQualityValue(quality: number, sellIn: number): number {
+    if (sellIn < 0) {
+      return Math.max(Math.floor((quality /= 2)), 0);
+    } else {
+      return Math.max((quality -= 1), 0);
     }
-    return item;
   }
 }
 

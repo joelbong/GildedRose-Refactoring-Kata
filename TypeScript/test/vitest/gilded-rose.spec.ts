@@ -6,22 +6,25 @@ import {
 } from "@/gilded-rose";
 
 describe("Gilded Rose - New item quality", () => {
-  it("All items quality cannot be zero", () => {
+  test.concurrent("Quality cannot be zero", () => {
     expect(() => new GildedRose([new Item("foo", 0, -1)])).toThrow(
       QualitySubceeded
     );
   });
-  it("Items quality, except exception, cannot be bigger than 50", () => {
+  test.concurrent("Quality cannot be bigger than 50", () => {
     expect(() => new GildedRose([new Item("foo", 0, 52)])).toThrow(
       QualityValueExceeded
     );
   });
-  it("Sulfuras quality cannot be smaller than 80", () => {
+});
+
+describe("Gilded Rose - New item quality exceptions", () => {
+  test.concurrent("Sulfuras quality cannot be smaller than 80", () => {
     expect(
       () => new GildedRose([new Item("Sulfuras, Hand of Ragnaros", 0, 79)])
     ).toThrow(QualitySubceeded);
   });
-  it("Sulfuras quality cannot be bigger than 80", () => {
+  test.concurrent("Sulfuras quality cannot be bigger than 80", () => {
     expect(
       () => new GildedRose([new Item("Sulfuras, Hand of Ragnaros", 0, 81)])
     ).toThrow(QualityValueExceeded);
@@ -29,19 +32,38 @@ describe("Gilded Rose - New item quality", () => {
 });
 
 describe("Gilded Rose - Update quality", () => {
-  it("Items, except exceptions, must lower in sellin", () => {
-    const gildedRose = new GildedRose([new Item("foo", 1, 5)]);
+  test.each([
+    [5, 4],
+    [0, -1],
+    [-1, -2],
+  ])("Sellin must decrease from %i to %i", (sellIn, expectedSellIn) => {
+    const gildedRose = new GildedRose([new Item("foo", sellIn, 5)]);
     const updatedSellin = gildedRose.updateQuality()[0].sellIn;
-    expect(updatedSellin).toBe(0);
+    console.log("Sellin decrease", sellIn, expectedSellIn, updatedSellin);
+    expect(updatedSellin).toBe(expectedSellIn);
   });
-  it("Items, except exceptions, must lower in quality", () => {
-    const gildedRose = new GildedRose([new Item("foo", 1, 5)]);
-    const updatedQuality = gildedRose.updateQuality()[0].quality;
-    expect(updatedQuality).toBe(4);
-  });
-  it("Items, except exceptions, must not lower in quality if its already 0", () => {
-    const gildedRose = new GildedRose([new Item("foo", 1, 0)]);
-    const updatedQuality = gildedRose.updateQuality()[0].quality;
-    expect(updatedQuality).toBe(0);
-  });
+  test.each([
+    [5, 4],
+    [0, 0],
+  ])(
+    "Quality where sell date HAS NOT passed must update from %d to %d",
+    (quality, expectedQuality) => {
+      const gildedRose = new GildedRose([new Item("foo", 5, quality)]);
+      const updatedQuality = gildedRose.updateQuality()[0].quality;
+      expect(updatedQuality).toBe(expectedQuality);
+    }
+  );
+  test.each([
+    [20, 10],
+    [5, 2],
+    [1, 0],
+    [0, 0],
+  ])(
+    "Quality where sell date HAS passed must update from %d to %d",
+    (quality, expectedQuality) => {
+      const gildedRose = new GildedRose([new Item("foo", -1, quality)]);
+      const updatedQuality = gildedRose.updateQuality()[0].quality;
+      expect(updatedQuality).toBe(expectedQuality);
+    }
+  );
 });
