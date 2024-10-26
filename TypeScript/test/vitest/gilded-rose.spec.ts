@@ -131,6 +131,16 @@ describe("Gilded Rose - Update quality exceptions", () => {
       expect(updatedQuality).toBe(12 * 3);
     }
   );
+  test.concurrent(
+    ItemExceptions.BACKSTAGE_PASSES + " quality becomes 0 if sellIn is passed",
+    () => {
+      const gildedRose = new GildedRose([
+        new Item(ItemExceptions.BACKSTAGE_PASSES, -1, 12),
+      ]);
+      const updatedQuality = gildedRose.updateQuality()[0].quality;
+      expect(updatedQuality).toBe(0);
+    }
+  );
   test.concurrent.each([
     [4, 17],
     [8, 26],

@@ -35,6 +35,7 @@ export enum ItemExceptions {
   SULFURAS = "Sulfuras, Hand of Ragnaros",
   AGED_BRIE = "Aged Brie",
   BACKSTAGE_PASSES = "Backstage passes to a TAFKAL80ETC concert",
+  CONJURED = "Conjured Mana Cake",
 }
 
 class ItemQualityValidator {
@@ -113,7 +114,7 @@ class ItemUpdater {
     sellIn: number,
     quality: number
   ): number {
-    if (sellIn === 0) {
+    if (sellIn < 0) {
       return 0;
     } else if (sellIn <= 5) {
       return Math.min(quality * 3, 50);
