@@ -34,7 +34,9 @@ export class Item {
 export enum ItemExceptions {
   SULFURAS = "Sulfuras, Hand of Ragnaros",
   AGED_BRIE = "Aged Brie",
+  BACKSTAGE_PASSES = "Backstage passes to a TAFKAL80ETC concert",
 }
+
 class ItemQualityValidator {
   validateQuality(item: Item) {
     if (item.quality < 0) {
@@ -68,7 +70,7 @@ class ItemUpdater {
     if (name === ItemExceptions.SULFURAS) {
       return this.updateSellInSulfuras(sellIn);
     }
-    return (sellIn -= 1);
+    return sellIn - 1;
   }
 
   private updateSellInSulfuras(sellIn: number): number {
@@ -86,22 +88,39 @@ class ItemUpdater {
     if (name === ItemExceptions.SULFURAS) {
       return this.updateQualityValueSulfuras(quality);
     }
+    if (name === ItemExceptions.BACKSTAGE_PASSES) {
+      return this.updateQualityValueBackstagePasses(sellIn, quality);
+    }
     if (sellIn < 0) {
-      return Math.max(Math.floor((quality /= 2)), 0);
+      return Math.max(Math.floor(quality / 2), 0);
     } else {
-      return Math.max((quality -= 1), 0);
+      return Math.max(quality - 1, 0);
     }
   }
 
   private updateQualityValueAgedBrie(quality: number): number {
     if (quality < 50) {
-      return (quality += 1);
+      return quality + 1;
     }
     return quality;
   }
 
   private updateQualityValueSulfuras(quality: number): number {
     return quality;
+  }
+
+  private updateQualityValueBackstagePasses(
+    sellIn: number,
+    quality: number
+  ): number {
+    if (sellIn === 0) {
+      return 0;
+    } else if (sellIn <= 5) {
+      return Math.min(quality * 3, 50);
+    } else if (sellIn <= 10) {
+      return Math.min(quality * 2, 50);
+    }
+    return Math.min(quality + 1, 50);
   }
 }
 

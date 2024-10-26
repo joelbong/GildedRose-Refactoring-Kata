@@ -109,4 +109,41 @@ describe("Gilded Rose - Update quality exceptions", () => {
       expect(updatedQuality).toBe(80);
     }
   );
+  test.concurrent(
+    ItemExceptions.BACKSTAGE_PASSES +
+      " increases in quality by 2 when sellIn is less or equal than 10 days but bigger than 5 days",
+    () => {
+      const gildedRose = new GildedRose([
+        new Item(ItemExceptions.BACKSTAGE_PASSES, 8, 12),
+      ]);
+      const updatedQuality = gildedRose.updateQuality()[0].quality;
+      expect(updatedQuality).toBe(12 * 2);
+    }
+  );
+  test.concurrent(
+    ItemExceptions.BACKSTAGE_PASSES +
+      " increases in quality by 3 when sellIn is less or equal than 5 days",
+    () => {
+      const gildedRose = new GildedRose([
+        new Item(ItemExceptions.BACKSTAGE_PASSES, 4, 12),
+      ]);
+      const updatedQuality = gildedRose.updateQuality()[0].quality;
+      expect(updatedQuality).toBe(12 * 3);
+    }
+  );
+  test.concurrent.each([
+    [4, 17],
+    [8, 26],
+    [20, 50],
+  ])(
+    ItemExceptions.BACKSTAGE_PASSES +
+      " quality can never be than bigger than 50 where sellIn is %i and quality is %i",
+    (sellIn, quality) => {
+      const gildedRose = new GildedRose([
+        new Item(ItemExceptions.BACKSTAGE_PASSES, sellIn, quality),
+      ]);
+      const updatedQuality = gildedRose.updateQuality()[0].quality;
+      expect(updatedQuality).toBe(50);
+    }
+  );
 });
