@@ -47,6 +47,9 @@ export class ItemUpdater {
   }
   updateQuality(item: Item) {
     item.sellIn -= 1;
+    if (item.quality > 0) {
+      item.quality -= 1;
+    }
     return item;
   }
 }

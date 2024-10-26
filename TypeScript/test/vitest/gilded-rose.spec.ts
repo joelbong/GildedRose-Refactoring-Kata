@@ -29,9 +29,19 @@ describe("Gilded Rose - New item quality", () => {
 });
 
 describe("Gilded Rose - Update quality", () => {
-  it("Items, except exception, must lower in sellin", () => {
+  it("Items, except exceptions, must lower in sellin", () => {
     const gildedRose = new GildedRose([new Item("foo", 1, 5)]);
     const updatedSellin = gildedRose.updateQuality()[0].sellIn;
     expect(updatedSellin).toBe(0);
+  });
+  it("Items, except exceptions, must lower in quality", () => {
+    const gildedRose = new GildedRose([new Item("foo", 1, 5)]);
+    const updatedQuality = gildedRose.updateQuality()[0].quality;
+    expect(updatedQuality).toBe(4);
+  });
+  it("Items, except exceptions, must not lower in quality if its already 0", () => {
+    const gildedRose = new GildedRose([new Item("foo", 1, 0)]);
+    const updatedQuality = gildedRose.updateQuality()[0].quality;
+    expect(updatedQuality).toBe(0);
   });
 });
