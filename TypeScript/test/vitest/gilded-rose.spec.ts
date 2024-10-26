@@ -24,7 +24,7 @@ describe("Gilded Rose - New item quality exceptions", () => {
     ItemExceptions.SULFURAS + " quality cannot be smaller than 80",
     () => {
       expect(
-        () => new GildedRose([new Item("Sulfuras, Hand of Ragnaros", 0, 79)])
+        () => new GildedRose([new Item(ItemExceptions.SULFURAS, 0, 79)])
       ).toThrow(QualitySubceeded);
     }
   );
@@ -32,7 +32,7 @@ describe("Gilded Rose - New item quality exceptions", () => {
     ItemExceptions.SULFURAS + " quality cannot be bigger than 80",
     () => {
       expect(
-        () => new GildedRose([new Item("Sulfuras, Hand of Ragnaros", 0, 81)])
+        () => new GildedRose([new Item(ItemExceptions.SULFURAS, 0, 81)])
       ).toThrow(QualityValueExceeded);
     }
   );
@@ -78,7 +78,9 @@ describe("Gilded Rose - Update quality exceptions", () => {
   test.concurrent.each([[5], [-5]])(
     ItemExceptions.AGED_BRIE + " increases in quality for sellIn $i",
     (sellIn) => {
-      const gildedRose = new GildedRose([new Item("Aged Brie", sellIn, 20)]);
+      const gildedRose = new GildedRose([
+        new Item(ItemExceptions.AGED_BRIE, sellIn, 20),
+      ]);
       const updatedQuality = gildedRose.updateQuality()[0].quality;
       expect(updatedQuality).toBe(21);
     }
@@ -87,9 +89,24 @@ describe("Gilded Rose - Update quality exceptions", () => {
     ItemExceptions.AGED_BRIE +
       " cannot increases in quality if it's value is 50",
     () => {
-      const gildedRose = new GildedRose([new Item("Aged Brie", 5, 50)]);
+      const gildedRose = new GildedRose([
+        new Item(ItemExceptions.AGED_BRIE, 5, 50),
+      ]);
       const updatedQuality = gildedRose.updateQuality()[0].quality;
       expect(updatedQuality).toBe(50);
+    }
+  );
+  test.concurrent(
+    ItemExceptions.SULFURAS + " will not be updated as it cannot be sold",
+    () => {
+      const gildedRose = new GildedRose([
+        new Item(ItemExceptions.SULFURAS, 5, 80),
+      ]);
+      const updatedItem = gildedRose.updateQuality()[0];
+      const updatedSellin = updatedItem.sellIn;
+      const updatedQuality = updatedItem.quality;
+      expect(updatedSellin).toBe(5);
+      expect(updatedQuality).toBe(80);
     }
   );
 });

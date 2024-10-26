@@ -46,8 +46,7 @@ class ItemQualityValidator {
       } else if (item.quality > 80) {
         throw new QualityValueExceeded(item, 80);
       }
-    }
-    if (item.quality > 50) {
+    } else if (item.quality > 50) {
       throw new QualityValueExceeded(item, 50);
     }
     return new Item(item.name, item.sellIn, item.quality);
@@ -56,7 +55,7 @@ class ItemQualityValidator {
 
 class ItemUpdater {
   updateQuality(item: Item): Item {
-    const newSellIn = this.updateSellin(item.sellIn);
+    const newSellIn = this.updateSellin(item.name, item.sellIn);
     const newQuality = this.updateQualityValue(
       item.name,
       item.quality,
@@ -65,8 +64,15 @@ class ItemUpdater {
     return new Item(item.name, newSellIn, newQuality);
   }
 
-  private updateSellin(sellIn: number): number {
+  private updateSellin(name: string, sellIn: number): number {
+    if (name === ItemExceptions.SULFURAS) {
+      return this.updateSellInSulfuras(sellIn);
+    }
     return (sellIn -= 1);
+  }
+
+  private updateSellInSulfuras(sellIn: number): number {
+    return sellIn;
   }
 
   private updateQualityValue(
@@ -77,6 +83,9 @@ class ItemUpdater {
     if (name === ItemExceptions.AGED_BRIE) {
       return this.updateQualityValueAgedBrie(quality);
     }
+    if (name === ItemExceptions.SULFURAS) {
+      return this.updateQualityValueSulfuras(quality);
+    }
     if (sellIn < 0) {
       return Math.max(Math.floor((quality /= 2)), 0);
     } else {
@@ -84,10 +93,14 @@ class ItemUpdater {
     }
   }
 
-  private updateQualityValueAgedBrie(quality: number) {
+  private updateQualityValueAgedBrie(quality: number): number {
     if (quality < 50) {
       return (quality += 1);
     }
+    return quality;
+  }
+
+  private updateQualityValueSulfuras(quality: number): number {
     return quality;
   }
 }
