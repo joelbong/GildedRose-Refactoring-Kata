@@ -10,7 +10,7 @@ export class GildedRose {
 
   updateQuality() {
     this.items = this.items.map((item) => {
-      return item;
+      return this.itemUpdater.updateQuality(item);
     });
     return this.items;
   }
@@ -43,6 +43,10 @@ export class ItemUpdater {
         throw new QualityValueExceeded(item, 80);
       }
     }
+    return item;
+  }
+  updateQuality(item: Item) {
+    item.sellIn -= 1;
     return item;
   }
 }

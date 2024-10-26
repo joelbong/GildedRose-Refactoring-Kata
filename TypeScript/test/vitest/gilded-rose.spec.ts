@@ -27,3 +27,11 @@ describe("Gilded Rose - New item quality", () => {
     ).toThrow(QualityValueExceeded);
   });
 });
+
+describe("Gilded Rose - Update quality", () => {
+  it("Items, except exception, must lower in sellin", () => {
+    const gildedRose = new GildedRose([new Item("foo", 1, 5)]);
+    const updatedSellin = gildedRose.updateQuality()[0].sellIn;
+    expect(updatedSellin).toBe(0);
+  });
+});
