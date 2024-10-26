@@ -3,6 +3,7 @@ import {
   Item,
   QualitySubceeded,
   QualityValueExceeded,
+  ItemExceptions,
 } from "@/gilded-rose";
 
 describe("Gilded Rose - New item quality", () => {
@@ -19,16 +20,22 @@ describe("Gilded Rose - New item quality", () => {
 });
 
 describe("Gilded Rose - New item quality exceptions", () => {
-  test.concurrent("Sulfuras quality cannot be smaller than 80", () => {
-    expect(
-      () => new GildedRose([new Item("Sulfuras, Hand of Ragnaros", 0, 79)])
-    ).toThrow(QualitySubceeded);
-  });
-  test.concurrent("Sulfuras quality cannot be bigger than 80", () => {
-    expect(
-      () => new GildedRose([new Item("Sulfuras, Hand of Ragnaros", 0, 81)])
-    ).toThrow(QualityValueExceeded);
-  });
+  test.concurrent(
+    ItemExceptions.SULFURAS + " quality cannot be smaller than 80",
+    () => {
+      expect(
+        () => new GildedRose([new Item("Sulfuras, Hand of Ragnaros", 0, 79)])
+      ).toThrow(QualitySubceeded);
+    }
+  );
+  test.concurrent(
+    ItemExceptions.SULFURAS + " quality cannot be bigger than 80",
+    () => {
+      expect(
+        () => new GildedRose([new Item("Sulfuras, Hand of Ragnaros", 0, 81)])
+      ).toThrow(QualityValueExceeded);
+    }
+  );
 });
 
 describe("Gilded Rose - Update quality", () => {
@@ -39,7 +46,6 @@ describe("Gilded Rose - Update quality", () => {
   ])("Sellin must decrease from %i to %i", (sellIn, expectedSellIn) => {
     const gildedRose = new GildedRose([new Item("foo", sellIn, 5)]);
     const updatedSellin = gildedRose.updateQuality()[0].sellIn;
-    console.log("Sellin decrease", sellIn, expectedSellIn, updatedSellin);
     expect(updatedSellin).toBe(expectedSellIn);
   });
   test.concurrent.each([
@@ -59,11 +65,31 @@ describe("Gilded Rose - Update quality", () => {
     [1, 0],
     [0, 0],
   ])(
-    "Quality where sell date HAS passed must update from %d to %d",
+    "Quality where sell date HAS passed must update from %i to %i",
     (quality, expectedQuality) => {
       const gildedRose = new GildedRose([new Item("foo", -1, quality)]);
       const updatedQuality = gildedRose.updateQuality()[0].quality;
       expect(updatedQuality).toBe(expectedQuality);
+    }
+  );
+});
+
+describe("Gilded Rose - Update quality exceptions", () => {
+  test.concurrent.each([[5], [-5]])(
+    ItemExceptions.AGED_BRIE + " increases in quality for sellIn $i",
+    (sellIn) => {
+      const gildedRose = new GildedRose([new Item("Aged Brie", sellIn, 20)]);
+      const updatedQuality = gildedRose.updateQuality()[0].quality;
+      expect(updatedQuality).toBe(21);
+    }
+  );
+  test.concurrent(
+    ItemExceptions.AGED_BRIE +
+      " cannot increases in quality if it's value is 50",
+    () => {
+      const gildedRose = new GildedRose([new Item("Aged Brie", 5, 50)]);
+      const updatedQuality = gildedRose.updateQuality()[0].quality;
+      expect(updatedQuality).toBe(50);
     }
   );
 });

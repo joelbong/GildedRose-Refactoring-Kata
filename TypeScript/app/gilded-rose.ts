@@ -31,20 +31,24 @@ export class Item {
   }
 }
 
+export enum ItemExceptions {
+  SULFURAS = "Sulfuras, Hand of Ragnaros",
+  AGED_BRIE = "Aged Brie",
+}
 class ItemQualityValidator {
   validateQuality(item: Item) {
     if (item.quality < 0) {
       throw new QualitySubceeded(item, 0);
     }
-    if (item.name !== "Sulfuras, Hand of Ragnaros" && item.quality > 50) {
-      throw new QualityValueExceeded(item, 50);
-    }
-    if (item.name === "Sulfuras, Hand of Ragnaros") {
+    if (item.name === ItemExceptions.SULFURAS) {
       if (item.quality < 80) {
         throw new QualitySubceeded(item, 80);
       } else if (item.quality > 80) {
         throw new QualityValueExceeded(item, 80);
       }
+    }
+    if (item.quality > 50) {
+      throw new QualityValueExceeded(item, 50);
     }
     return new Item(item.name, item.sellIn, item.quality);
   }
@@ -53,21 +57,38 @@ class ItemQualityValidator {
 class ItemUpdater {
   updateQuality(item: Item): Item {
     const newSellIn = this.updateSellin(item.sellIn);
-    const newQuality = this.updateQualityValue(item.quality, item.sellIn);
+    const newQuality = this.updateQualityValue(
+      item.name,
+      item.quality,
+      item.sellIn
+    );
     return new Item(item.name, newSellIn, newQuality);
   }
 
   private updateSellin(sellIn: number): number {
-    sellIn = sellIn -= 1;
-    return sellIn;
+    return (sellIn -= 1);
   }
 
-  private updateQualityValue(quality: number, sellIn: number): number {
+  private updateQualityValue(
+    name: string,
+    quality: number,
+    sellIn: number
+  ): number {
+    if (name === ItemExceptions.AGED_BRIE) {
+      return this.updateQualityValueAgedBrie(quality);
+    }
     if (sellIn < 0) {
       return Math.max(Math.floor((quality /= 2)), 0);
     } else {
       return Math.max((quality -= 1), 0);
     }
+  }
+
+  private updateQualityValueAgedBrie(quality: number) {
+    if (quality < 50) {
+      return (quality += 1);
+    }
+    return quality;
   }
 }
 
