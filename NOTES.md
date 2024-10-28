@@ -1,3 +1,8 @@
+# Reviewer instruction
+
+- Go to the Typescript folder where the code is adapted
+- test are configured vitest -> npm run test:vitest
+
 # Development Process
 
 - Review and understand both the requirements and the existing code.
