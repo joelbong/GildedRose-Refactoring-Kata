@@ -58,17 +58,14 @@ export class ItemUpdaterBase implements ItemUpdater {
 
   private updateDefault(sellIn: number, quality: number): number {
     if (sellIn < MINIMUM_SELLIN_DAYS) {
-      return Math.max(Math.floor(quality / 2), MINIMUM_DEFAULT_QUALITY);
+      return this.decreaseQuality(quality, 2);
     } else {
-      return Math.max(quality - 1, MINIMUM_DEFAULT_QUALITY);
+      return this.decreaseQuality(quality);
     }
   }
 
   private updateQualityValueAgedBrie(quality: number): number {
-    if (quality < MAXIMUM_DEFAULT_QUALITY) {
-      return quality + 1;
-    }
-    return quality;
+    return this.increaseQuality(quality);
   }
 
   private updateQualityValueSulfuras(quality: number): number {
@@ -80,20 +77,28 @@ export class ItemUpdaterBase implements ItemUpdater {
     quality: number
   ): number {
     if (sellIn < MINIMUM_SELLIN_DAYS) {
-      return 0;
+      return MINIMUM_DEFAULT_QUALITY;
     } else if (sellIn <= 5) {
-      return Math.min(quality * 3, MAXIMUM_DEFAULT_QUALITY);
+      return this.increaseQuality(quality, 3);
     } else if (sellIn <= 10) {
-      return Math.min(quality * 2, MAXIMUM_DEFAULT_QUALITY);
+      return this.increaseQuality(quality, 2);
     }
-    return Math.min(quality + 1, MAXIMUM_DEFAULT_QUALITY);
+    return this.increaseQuality(quality, 1);
   }
 
   private updateQualityValueConjured(sellIn: number, quality: number): number {
     if (sellIn < MINIMUM_SELLIN_DAYS) {
-      return Math.max(Math.floor(quality / 4), MINIMUM_DEFAULT_QUALITY);
+      return this.decreaseQuality(quality, 4);
     } else {
-      return Math.max(quality / 2, MINIMUM_DEFAULT_QUALITY);
+      return this.decreaseQuality(quality, 2);
     }
+  }
+
+  private decreaseQuality(quality: number, factor: number = 1): number {
+    return Math.max(Math.floor(quality - factor), MINIMUM_DEFAULT_QUALITY);
+  }
+
+  private increaseQuality(quality: number, factor: number = 1): number {
+    return Math.min(quality + factor, MAXIMUM_DEFAULT_QUALITY);
   }
 }

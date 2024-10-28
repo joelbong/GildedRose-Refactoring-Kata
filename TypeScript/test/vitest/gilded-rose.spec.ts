@@ -57,8 +57,8 @@ describe("Gilded Rose - Update quality", () => {
     }
   );
   test.concurrent.each([
-    [20, 10],
-    [5, 2],
+    [20, 18],
+    [5, 3],
     [1, 0],
     [0, 0],
   ])(
@@ -115,7 +115,7 @@ describe("Gilded Rose - Update quality exceptions", () => {
         new Item(ItemExceptions.BACKSTAGE_PASSES, 8, 12),
       ]);
       const updatedQuality = gildedRose.updateQuality()[0].quality;
-      expect(updatedQuality).toBe(12 * 2);
+      expect(updatedQuality).toBe(14);
     }
   );
   test.concurrent(
@@ -126,7 +126,7 @@ describe("Gilded Rose - Update quality exceptions", () => {
         new Item(ItemExceptions.BACKSTAGE_PASSES, 4, 12),
       ]);
       const updatedQuality = gildedRose.updateQuality()[0].quality;
-      expect(updatedQuality).toBe(12 * 3);
+      expect(updatedQuality).toBe(15);
     }
   );
   test.concurrent(
@@ -140,9 +140,9 @@ describe("Gilded Rose - Update quality exceptions", () => {
     }
   );
   test.concurrent.each([
-    [4, 17],
-    [8, 26],
-    [20, 50],
+    [4, 47],
+    [8, 48],
+    [20, 49],
   ])(
     ItemExceptions.BACKSTAGE_PASSES +
       " quality can never be than bigger than 50 where sellIn is %i and quality is %i",
@@ -155,8 +155,8 @@ describe("Gilded Rose - Update quality exceptions", () => {
     }
   );
   test.concurrent.each([
-    [20, 12, 6],
-    [-1, 12, 3],
+    [20, 12, 10],
+    [-1, 12, 8],
     [-5, 0, 0],
   ])(
     ItemExceptions.CONJURED +
