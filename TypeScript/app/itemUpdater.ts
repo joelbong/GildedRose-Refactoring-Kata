@@ -1,6 +1,10 @@
 import { Item } from "@/item";
 import { ItemExceptions } from "@/itemExceptions";
-import { MAXIMUM_DEFAULT_QUALITY, MINIMUM_DEFAULT_QUALITY } from "@/defaults";
+import {
+  MAXIMUM_DEFAULT_QUALITY,
+  MINIMUM_DEFAULT_QUALITY,
+  MINIMUM_SELLIN_DAYS,
+} from "@/defaults";
 
 export interface ItemUpdater {
   updateQuality(item: Item): Item;
@@ -53,7 +57,7 @@ export class ItemUpdaterBase implements ItemUpdater {
   }
 
   private updateDefault(sellIn: number, quality: number): number {
-    if (sellIn < 0) {
+    if (sellIn < MINIMUM_SELLIN_DAYS) {
       return Math.max(Math.floor(quality / 2), MINIMUM_DEFAULT_QUALITY);
     } else {
       return Math.max(quality - 1, MINIMUM_DEFAULT_QUALITY);
@@ -75,7 +79,7 @@ export class ItemUpdaterBase implements ItemUpdater {
     sellIn: number,
     quality: number
   ): number {
-    if (sellIn < 0) {
+    if (sellIn < MINIMUM_SELLIN_DAYS) {
       return 0;
     } else if (sellIn <= 5) {
       return Math.min(quality * 3, MAXIMUM_DEFAULT_QUALITY);
@@ -86,7 +90,7 @@ export class ItemUpdaterBase implements ItemUpdater {
   }
 
   private updateQualityValueConjured(sellIn: number, quality: number): number {
-    if (sellIn < 0) {
+    if (sellIn < MINIMUM_SELLIN_DAYS) {
       return Math.max(Math.floor(quality / 4), MINIMUM_DEFAULT_QUALITY);
     } else {
       return Math.max(quality / 2, MINIMUM_DEFAULT_QUALITY);

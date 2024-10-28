@@ -1,3 +1,4 @@
 export const MINIMUM_DEFAULT_QUALITY = 0;
 export const MAXIMUM_DEFAULT_QUALITY = 50;
 export const MAXIMUM_SULFURAS_QUALITY = 80;
+export const MINIMUM_SELLIN_DAYS = 0;
