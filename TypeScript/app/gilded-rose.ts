@@ -1,9 +1,15 @@
 export class GildedRose {
   items: Array<Item>;
-  private itemQualityValidator = new ItemQualityValidator();
-  private itemUpdater: ItemUpdater = new ItemUpdater();
+  private itemQualityValidator: ItemQualityValidator;
+  private itemUpdater: ItemUpdater;
 
-  constructor(items = [] as Array<Item>) {
+  constructor(
+    items = [] as Array<Item>,
+    itemQualityValidator = new ItemQualityValidatorBase(),
+    itemUpdater = new ItemUpdaterBase()
+  ) {
+    this.itemQualityValidator = itemQualityValidator;
+    this.itemUpdater = itemUpdater;
     this.items = items.map((item) =>
       this.itemQualityValidator.validateQuality(item)
     );
@@ -38,8 +44,12 @@ export enum ItemExceptions {
   CONJURED = "Conjured Mana Cake",
 }
 
-class ItemQualityValidator {
-  validateQuality(item: Item) {
+interface ItemQualityValidator {
+  validateQuality(item: Item): Item;
+}
+
+class ItemQualityValidatorBase implements ItemQualityValidator {
+  validateQuality(item: Item): Item {
     if (item.quality < 0) {
       throw new QualitySubceeded(item, 0);
     }
@@ -56,7 +66,11 @@ class ItemQualityValidator {
   }
 }
 
-class ItemUpdater {
+interface ItemUpdater {
+  updateQuality(item: Item): Item;
+}
+
+class ItemUpdaterBase implements ItemUpdater {
   updateQuality(item: Item): Item {
     const newSellIn = this.updateSellin(item.name, item.sellIn);
     const newQuality = this.updateQualityValue(
