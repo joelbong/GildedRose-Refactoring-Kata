@@ -4,6 +4,12 @@ import { ItemExceptions } from "@/itemExceptions";
 import { QualitySubceeded, QualityValueExceeded } from "@/errors";
 
 describe("Gilded Rose - New item quality", () => {
+  test.concurrent("Valid item must be created", () => {
+    const gildedRose = new GildedRose([new Item("foo", 5, 4)]);
+    expect(gildedRose.items[0].name).toBe("foo");
+    expect(gildedRose.items[0].sellIn).toBe(5);
+    expect(gildedRose.items[0].quality).toBe(4);
+  });
   test.concurrent("Quality cannot be zero", () => {
     expect(() => new GildedRose([new Item("foo", 0, -1)])).toThrow(
       QualitySubceeded
