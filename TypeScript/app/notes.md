@@ -18,11 +18,17 @@
   - Favor composition over inheritance
   - Encapsulate what varies
   - Single Responsibility Principle
+- Clean code best practices
+  - Meaningful Names: Naming is hard, but I conveyed as much as possible of the meaning for function or a variable
+  - Functions Should Be Small and Do One Thing
+  - Self-Explanatory Code
+  - Proper Error Handling with explicit error codes
+  - Code Formatting with auto prettify
+  - Avoid Code Duplication
+  - TDD
 - Keep backward compatibility by using default values in the constructor method
 - Separate update logic in `ItemUpdater` for special items to avoid cluttering the code with numerous if statements in a single place, as seen in the initial code.
 - Adopted immutability to prevent side effects; functions return new items rather than altering existing ones. The exception is for the `GildedRose` items state.
-- Explicit error codes
-- Naming is hard, but I conveyed as much as possible of the meaning of a function or a variable
 - Be pragmatic, start with working code and refactor the code where you see fit
 
 # Improvements
