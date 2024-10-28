@@ -94,7 +94,8 @@ describe("Gilded Rose - Update quality exceptions", () => {
     }
   );
   test.concurrent(
-    ItemExceptions.SULFURAS + " will not be updated as it cannot be sold",
+    ItemExceptions.SULFURAS +
+      " will not be updated as it cannot be sold. It sellin and quality must remain constant",
     () => {
       const gildedRose = new GildedRose([
         new Item(ItemExceptions.SULFURAS, 5, 80),
