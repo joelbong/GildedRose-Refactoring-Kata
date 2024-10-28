@@ -12,7 +12,7 @@
 - Commit each successful test individually. Depending on the coding process within a team I could opt to commit first with a failing test and follow up then with commit for the passing test
 - As part of a team:
   - I'd ask the team if I did understand all the requirements correctly.
-  - Optionally, I'd check the with a teammate the implementation of the first commit
+  - Optionally, I'd check with a teammate the implementation of the first commit
   - At the end of the project I would send a pull request to peer review the code with a teammate
 
 # Code Patterns and Practices
