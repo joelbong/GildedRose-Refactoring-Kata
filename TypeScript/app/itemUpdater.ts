@@ -32,18 +32,26 @@ export class ItemUpdaterBase implements ItemUpdater {
     quality: number,
     sellIn: number
   ): number {
-    if (name === ItemExceptions.AGED_BRIE) {
-      return this.updateQualityValueAgedBrie(quality);
+    switch (name) {
+      case ItemExceptions.AGED_BRIE: {
+        return this.updateQualityValueAgedBrie(quality);
+      }
+      case ItemExceptions.SULFURAS: {
+        return this.updateQualityValueSulfuras(quality);
+      }
+      case ItemExceptions.BACKSTAGE_PASSES: {
+        return this.updateQualityValueBackstagePasses(sellIn, quality);
+      }
+      case ItemExceptions.CONJURED: {
+        return this.updateQualityValueConjured(sellIn, quality);
+      }
+      default: {
+        return this.updateDefault(sellIn, quality);
+      }
     }
-    if (name === ItemExceptions.SULFURAS) {
-      return this.updateQualityValueSulfuras(quality);
-    }
-    if (name === ItemExceptions.BACKSTAGE_PASSES) {
-      return this.updateQualityValueBackstagePasses(sellIn, quality);
-    }
-    if (name === ItemExceptions.CONJURED) {
-      return this.updateQualityValueConjured(sellIn, quality);
-    }
+  }
+
+  private updateDefault(sellIn: number, quality: number): number {
     if (sellIn < 0) {
       return Math.max(Math.floor(quality / 2), 0);
     } else {
