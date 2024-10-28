@@ -22,9 +22,17 @@ export class ItemUpdaterBase implements ItemUpdater {
   }
 
   private updateSellin(name: string, sellIn: number): number {
-    if (name === ItemExceptions.SULFURAS) {
-      return this.updateSellInSulfuras(sellIn);
+    switch (name) {
+      case ItemExceptions.SULFURAS: {
+        return this.updateSellInSulfuras(sellIn);
+      }
+      default: {
+        return this.updateSellinDefault(sellIn);
+      }
     }
+  }
+
+  private updateSellinDefault(sellIn: number) {
     return sellIn - 1;
   }
 
@@ -51,13 +59,13 @@ export class ItemUpdaterBase implements ItemUpdater {
         return this.updateQualityValueConjured(sellIn, quality);
       }
       default: {
-        return this.updateDefault(sellIn, quality);
+        return this.updateQualityDefault(sellIn, quality);
       }
     }
   }
 
-  private updateDefault(sellIn: number, quality: number): number {
-    if (sellIn < MINIMUM_SELLIN_DAYS) {
+  private updateQualityDefault(sellIn: number, quality: number): number {
+    if (this.sellInDayPassed(sellIn)) {
       return this.decreaseQuality(quality, 2);
     } else {
       return this.decreaseQuality(quality);
@@ -76,7 +84,7 @@ export class ItemUpdaterBase implements ItemUpdater {
     sellIn: number,
     quality: number
   ): number {
-    if (sellIn < MINIMUM_SELLIN_DAYS) {
+    if (this.sellInDayPassed(sellIn)) {
       return MINIMUM_DEFAULT_QUALITY;
     } else if (sellIn <= 5) {
       return this.increaseQuality(quality, 3);
@@ -87,7 +95,7 @@ export class ItemUpdaterBase implements ItemUpdater {
   }
 
   private updateQualityValueConjured(sellIn: number, quality: number): number {
-    if (sellIn < MINIMUM_SELLIN_DAYS) {
+    if (this.sellInDayPassed(sellIn)) {
       return this.decreaseQuality(quality, 4);
     } else {
       return this.decreaseQuality(quality, 2);
@@ -100,5 +108,12 @@ export class ItemUpdaterBase implements ItemUpdater {
 
   private increaseQuality(quality: number, factor: number = 1): number {
     return Math.min(quality + factor, MAXIMUM_DEFAULT_QUALITY);
+  }
+
+  private sellInDayPassed(
+    sellIn: number,
+    minimumSellIn: number = MINIMUM_SELLIN_DAYS
+  ): boolean {
+    return sellIn < minimumSellIn;
   }
 }
