@@ -1,10 +1,7 @@
-import {
-  GildedRose,
-  Item,
-  QualitySubceeded,
-  QualityValueExceeded,
-  ItemExceptions,
-} from "@/gilded-rose";
+import { Item } from "@/item";
+import { GildedRose } from "@/gilded-rose";
+import { ItemExceptions } from "@/itemExceptions";
+import { QualitySubceeded, QualityValueExceeded } from "@/errors";
 
 describe("Gilded Rose - New item quality", () => {
   test.concurrent("Quality cannot be zero", () => {
