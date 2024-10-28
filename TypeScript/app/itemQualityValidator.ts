@@ -1,6 +1,11 @@
 import { Item } from "@/item";
 import { ItemExceptions } from "@/itemExceptions";
 import { QualitySubceeded, QualityValueExceeded } from "@/errors";
+import {
+  MINIMUM_DEFAULT_QUALITY,
+  MAXIMUM_DEFAULT_QUALITY,
+  MAXIMUM_SULFURAS_QUALITY,
+} from "@/defaults";
 
 export interface ItemQualityValidator {
   validateQuality(item: Item): Item;
@@ -8,17 +13,17 @@ export interface ItemQualityValidator {
 
 export class ItemQualityValidatorBase implements ItemQualityValidator {
   validateQuality(item: Item): Item {
-    if (item.quality < 0) {
-      throw new QualitySubceeded(item, 0);
+    if (item.quality < MINIMUM_DEFAULT_QUALITY) {
+      throw new QualitySubceeded(item, MINIMUM_DEFAULT_QUALITY);
     }
     if (item.name === ItemExceptions.SULFURAS) {
-      if (item.quality < 80) {
-        throw new QualitySubceeded(item, 80);
-      } else if (item.quality > 80) {
-        throw new QualityValueExceeded(item, 80);
+      if (item.quality < MAXIMUM_SULFURAS_QUALITY) {
+        throw new QualitySubceeded(item, MAXIMUM_SULFURAS_QUALITY);
+      } else if (item.quality > MAXIMUM_SULFURAS_QUALITY) {
+        throw new QualityValueExceeded(item, MAXIMUM_SULFURAS_QUALITY);
       }
-    } else if (item.quality > 50) {
-      throw new QualityValueExceeded(item, 50);
+    } else if (item.quality > MAXIMUM_DEFAULT_QUALITY) {
+      throw new QualityValueExceeded(item, MAXIMUM_DEFAULT_QUALITY);
     }
     return new Item(item.name, item.sellIn, item.quality);
   }

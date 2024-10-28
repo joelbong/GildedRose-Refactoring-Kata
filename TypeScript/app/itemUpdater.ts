@@ -1,5 +1,6 @@
 import { Item } from "@/item";
 import { ItemExceptions } from "@/itemExceptions";
+import { MAXIMUM_DEFAULT_QUALITY, MINIMUM_DEFAULT_QUALITY } from "@/defaults";
 
 export interface ItemUpdater {
   updateQuality(item: Item): Item;
@@ -53,14 +54,14 @@ export class ItemUpdaterBase implements ItemUpdater {
 
   private updateDefault(sellIn: number, quality: number): number {
     if (sellIn < 0) {
-      return Math.max(Math.floor(quality / 2), 0);
+      return Math.max(Math.floor(quality / 2), MINIMUM_DEFAULT_QUALITY);
     } else {
-      return Math.max(quality - 1, 0);
+      return Math.max(quality - 1, MINIMUM_DEFAULT_QUALITY);
     }
   }
 
   private updateQualityValueAgedBrie(quality: number): number {
-    if (quality < 50) {
+    if (quality < MAXIMUM_DEFAULT_QUALITY) {
       return quality + 1;
     }
     return quality;
@@ -77,18 +78,18 @@ export class ItemUpdaterBase implements ItemUpdater {
     if (sellIn < 0) {
       return 0;
     } else if (sellIn <= 5) {
-      return Math.min(quality * 3, 50);
+      return Math.min(quality * 3, MAXIMUM_DEFAULT_QUALITY);
     } else if (sellIn <= 10) {
-      return Math.min(quality * 2, 50);
+      return Math.min(quality * 2, MAXIMUM_DEFAULT_QUALITY);
     }
-    return Math.min(quality + 1, 50);
+    return Math.min(quality + 1, MAXIMUM_DEFAULT_QUALITY);
   }
 
   private updateQualityValueConjured(sellIn: number, quality: number): number {
     if (sellIn < 0) {
-      return Math.max(Math.floor(quality / 4), 0);
+      return Math.max(Math.floor(quality / 4), MINIMUM_DEFAULT_QUALITY);
     } else {
-      return Math.max(quality / 2, 0);
+      return Math.max(quality / 2, MINIMUM_DEFAULT_QUALITY);
     }
   }
 }
